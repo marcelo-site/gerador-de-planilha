@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Gerador de Planilha</title>
     <link rel="stylesheet" href="style.css" />
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
@@ -21,7 +21,7 @@
         <table>
           <tr>
             <td colspan="1" rowspan="1" style="width: 200px">
-              <input type="text" />
+              <input type="text"  spellcheck="false"/>
             </td>
           </tr>
         </table>
@@ -30,7 +30,12 @@
     <span class="arrow" style="transform: rotateY(180deg); right: 255px;">⏴</span>
     <aside>
       <div id="aside">
-        <div id="etilos">
+        <div>
+          <div id="colTable">Colunas na tabela: <span class="btn">+</span>
+             <span class="btn" style="padding: 1px 6px">-</span>
+          </div>
+        </div>
+        <div id="estilos">
           <h3>Estilos</h3>
           <div>
             <label for="colspan">Quantide de colunas: </label>
@@ -62,7 +67,7 @@
           </div>
           <div>
             <label for="negrito">Texto em negrito: </label>
-            <input type="checkbox" name="negrito" id="negrito"  style="margin-left: -64px;"/>
+            <input type="checkbox" name="negrito" id="negrito" />
           </div>
           <div>
             <label for="position-text">Alinhamento do texto: </label>
@@ -74,7 +79,7 @@
           </div>
           <div>
             <label for="copy">Copiar estilo: </label>
-            <input type="checkbox" name="copy" id="copy" style="margin-left: -64px;"/>
+            <input type="checkbox" name="copy" id="copy"/>
           </div>
           <div >
             <label for="paste">Colar estilo: </label>
@@ -102,7 +107,7 @@
             <span id="del-block"
               >Deletar bloco atual:
               <span>
-                <span class="btn" style="padding: 3px 7px">-</span>
+                <span class="btn" style="padding: 1px 6px">-</span>
               </span>
             </span>
           </div>

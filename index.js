@@ -1,6 +1,6 @@
+const colTable = document.querySelectorAll("#colTable span");
 const main = document.querySelector("main");
 const table = document.querySelector("table");
-const tr = document.querySelectorAll("tr");
 const colspan = document.querySelector("#colspan");
 let td = document.querySelectorAll("td");
 let tdInput = document.querySelectorAll("td input");
@@ -19,11 +19,44 @@ const number = document.querySelector("#number");
 const sum = document.querySelector("#sum");
 let numbers = document.querySelectorAll(".number");
 const alinharText = document.querySelector("select");
-const copy = document.querySelector("#copy")
-const paste = document.querySelector("#paste")
+const copy = document.querySelector("#copy");
+const paste = document.querySelector("#paste");
 
 let deleteblockTrue = false;
 let tdIndex = -1;
+
+colTable[0].addEventListener("click", (el) => {
+  const tr = document.querySelectorAll("tr");
+  tr.forEach((row) => {
+    const td = document.createElement("td");
+    td.colSpan = 1;
+    td.rowSpan = 1;
+    td.style.width = "200px";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.spellcheck = false;
+    td.append(input);
+    row.appendChild(td);
+  });
+  tdEventListener();
+});
+
+colTable[1].addEventListener("click", (el) => {
+  const tr = document.querySelectorAll("tr");
+  const length = tr[0].querySelectorAll("td").length;
+  if (length === 1) {
+    alert("Essa é a ultima coluna!");
+  } else {
+    const res = confirm("Tem certeza que deseja deletar um,a coluna?");
+    if (res === true) {
+      if (length > 1) {
+        tr.forEach((row) => row.removeChild(row.lastChild));
+        td = document.querySelectorAll("td");
+      }
+    }
+  }
+  tdEventListener();
+});
 
 function getStyle(el) {
   const node = el.getAttribute("style");
@@ -43,6 +76,7 @@ function getStyle(el) {
 }
 
 function tdEventListener() {
+  td = document.querySelectorAll("td");
   td.forEach((el, i) => {
     el.addEventListener("click", () => {
       td.forEach((e) => (e.style.backgroundColor = ""));
@@ -85,48 +119,50 @@ function tdEventListener() {
 }
 tdEventListener();
 
-const msg = document.querySelector('#message')
-let styleTd = ''
-let styleInput = ''
-let tdCol = 1
-let tdRow = 1
-function copyStyle () {
-  if(tdIndex >= 0) {
-    tdCol = td[tdIndex].getAttribute('colspan')
-    tdRow = td[tdIndex].getAttribute('rowspan')
+const msg = document.querySelector("#message");
+let styleTd = "";
+let styleInput = "";
+let tdCol = 1;
+let tdRow = 1;
+function copyStyle() {
+  td = document.querySelectorAll("td");
+  if (tdIndex >= 0) {
+    tdCol = td[tdIndex].getAttribute("colspan");
+    tdRow = td[tdIndex].getAttribute("rowspan");
     styleTd = td[tdIndex].getAttribute("style");
     styleInput = tdInput[tdIndex].getAttribute("style");
-    msg.innerHTML = 'Esltilo copiado!'
-    msg.style.display = ''
+    msg.innerHTML = "Esltilo copiado!";
+    msg.style.display = "";
     setTimeout(() => {
-      copy.checked = false
-      msg.style.display = 'none'
-    }, 3 * 1000)
+      copy.checked = false;
+      msg.style.display = "none";
+    }, 3 * 1000);
   }
 }
 
-copy.addEventListener('change', (el) => {
-  if(el.target.checked) copyStyle()
-})
+copy.addEventListener("change", (el) => {
+  if (el.target.checked) copyStyle();
+});
 
-function pasteStyle () {
-  if(tdIndex >= 0) {
-    td[tdIndex].setAttribute('colspan', tdCol)
-    td[tdIndex].setAttribute('rowspan', tdRow)
-    td[tdIndex].style = styleTd
-    tdInput[tdIndex].style = styleInput
-    msg.innerHTML = 'Esltilo colado aqui!'
-    msg.style.display = ''
+function pasteStyle() {
+  td = document.querySelectorAll("td");
+  if (tdIndex >= 0) {
+    td[tdIndex].setAttribute("colspan", tdCol);
+    td[tdIndex].setAttribute("rowspan", tdRow);
+    td[tdIndex].style = styleTd;
+    tdInput[tdIndex].style = styleInput;
+    msg.innerHTML = "Esltilo colado aqui!";
+    msg.style.display = "";
     setTimeout(() => {
-      paste.checked = false
-      msg.style.display = 'none'
-    }, 3 * 1000)
+      paste.checked = false;
+      msg.style.display = "none";
+    }, 3 * 1000);
   }
 }
 
-paste.addEventListener('change', (el) => {
-  if(el.target.checked && tdIndex >= 0) pasteStyle()
-})
+paste.addEventListener("change", (el) => {
+  if (el.target.checked && tdIndex >= 0) pasteStyle();
+});
 
 size.addEventListener("change", (el) => {
   if (tdIndex >= 0) td[tdIndex].style.width = `${el.target.value}px`;
@@ -293,21 +329,21 @@ asideBefore.addEventListener("click", (el) => {
   }
 });
 
-function tirarFoco() {
-  td.forEach((el) => {
-    el.style.backgroundColor = "";
-    tdInput[tdIndex].blur();
-  });
-}
+// function tirarFoco() {
+//   td.forEach((el) => {
+//     el.style.backgroundColor = "";
+//     tdInput[tdIndex].blur();
+//   });
+// }
 // gerar pdf
 const generetePDF = document.querySelector("#pdf");
 generetePDF.addEventListener("click", () => {
-  tirarFoco();
+  // tirarFoco();
   const content = document.querySelector("table");
-  const date = new Date().toLocaleDateString("pt-br").replace(/\//g, "-");
+  const date = new Date.now();
   const options = {
     margin: 1,
-    filename: `pedido-catalogo-incrivel-${date}.pdf`,
+    filename: `${date}-planilha.pdf`,
     html2canvas: { sacle: 1 },
     pagebreak: { avoid: "tr" },
     image: { type: "jpeg", quality: 0.98 },

@@ -75,6 +75,7 @@ table input::placeholder {
   color: rgb(190, 193, 193);
 }
 
+/* aside */
 aside {
   border-left: 1px solid var(--bd-color);
   height: 100vh;
@@ -102,8 +103,22 @@ span.arrow {
   transition: 0.2s;
 }
 
+#negrito {
+  margin-left: -64px;
+}
+
+#colTable {
+  margin-top: 1em;
+  margin-left: 10px;
+}
+
+#colTable span {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
 aside h3 {
-  text-align: center;
+  margin-left: 50px;
   font-size: 20px;
 }
 
@@ -129,7 +144,7 @@ input:checked {
 
 aside div,
 aside button {
-  margin: 10px 3px;
+  margin: 6px 3px;
 }
 
 .btn {
@@ -140,16 +155,24 @@ aside button {
   cursor: pointer;
 }
 
+span.btn {
+  padding: 2px 4px;
+}
+
 .btn:hover {
   opacity: 0.8;
 }
 
-aside > div#etilos {
+aside > div#estilos {
   margin-top: 2em;
 }
 
+aside #estilos input[type="checkbox"] {
+  margin-left: -64px;
+}
+
 #acoes > div > span,
-#etilos > div,
+#estilos > div,
 .grid-two {
   display: grid;
   grid-template-columns: 1fr 82px;
