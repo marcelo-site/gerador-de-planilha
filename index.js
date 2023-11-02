@@ -23,6 +23,23 @@ const alinharText = document.querySelector("select");
 let deleteblockTrue = false;
 let tdIndex = -1;
 
+function getStyle(el) {
+  const node = el.getAttribute("style");
+  if (node) {
+    const arr = node.split(";");
+    const value = arr.filter((element) => {
+      const width = element.split(":");
+      if (width[0] === "width") {
+        size.value = width[1].replace(" ", "").replace("px", "");
+        return;
+      }
+    });
+    if (!value) size.value = el.clientWidth;
+  } else {
+    size.value = el.clientWidth;
+  }
+}
+
 function tdEventListener() {
   td.forEach((el, i) => {
     el.addEventListener("click", () => {
@@ -31,12 +48,13 @@ function tdEventListener() {
       colspan.value = el.getAttribute("colspan") || 1;
       linhas.value = el.getAttribute("rowspan") || 1;
       td.forEach((e) => (e.style.backgroundColor = ""));
-      el.style.backgroundColor = "#ddddddbe";
       tdInput[i]?.style?.fontWeight === "bold"
         ? (negrito.checked = true)
         : (negrito.checked = false);
-      size.value = el.clientWidth;
+
+      getStyle(el);
     });
+
     tdInput = document.querySelectorAll("td input");
     if (tdInput.length > 1) {
       deleteblockTrue = true;
@@ -44,44 +62,29 @@ function tdEventListener() {
       deleteblockTrue = false;
     }
 
-    tdInput.forEach((el, i) => {
-      el.addEventListener("focus", () => {
-        fontsize.value = el?.style?.fontSize.replace("px", "") || 16;
-        el.classList.contains("number")
-          ? (number.checked = true)
-          : (number.checked = false);
-        el.classList.contains("sum")
-          ? (sum.checked = true)
-          : (sum.checked = false);
+    tdInput.forEach((element, i) => {
+      element.addEventListener(
+        "focus",
+        () => {
+          fontsize.value = element?.style?.fontSize.replace("px", "") || 16;
+          element.classList.contains("number")
+            ? (number.checked = true)
+            : (number.checked = false);
+          element.classList.contains("sum")
+            ? (sum.checked = true)
+            : (sum.checked = false);
 
-        const node = el.getAttribute("style");
-        if(node) {
-          const arr = node.split(";");
-          const value = arr.filter((el) => {
-            const textAlign = el.split(":");
-            if (textAlign[0] === "text-align") {
-              alinharText.value = textAlign[1].replace(" ", "");
-              return;
-            }
-          });
-        } else {
-          alinharText.value = 'center';
-        }
-      },
-      el.addEventListener('change', () => {
-        sumValue()
-      }));
+          getStyle(el);
+        },
+        el.addEventListener("change", sumValue)
+      );
     });
   });
 }
 tdEventListener();
 
 size.addEventListener("change", (el) => {
-  console.log(td[tdIndex]);
-  if (tdIndex >= 0) {
-    console.log(77);
-    td[tdIndex].style.width = `${el.target.value}px`;
-  }
+  if (tdIndex >= 0) td[tdIndex].style.width = `${el.target.value}px`;
 });
 
 function stylechange(style, value) {
@@ -139,7 +142,7 @@ delBlock.addEventListener("click", () => {
   if (deleteblockTrue) {
     td[tdIndex].style.backgroundColor = "red";
     setTimeout(() => {
-      const res = confirm("Deseja deletar um bloco");
+      const res = confirm("Deseja deletar um bloco?");
       if (res === true) {
         td[tdIndex].parentNode.removeChild(td[tdIndex]);
       } else {
@@ -172,7 +175,7 @@ function sumValue() {
         const value = parseFloat(num.value.replace(".", "").replace(",", "."));
         arr.push(value);
       });
-      const value = arr.reduce((acc, cur) => cur + acc, 0);
+      const value = arr.reduce((acc, cur) => parseFloat(cur) + acc, 0);
       sum.value = value.toLocaleString("pt-br", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -182,31 +185,46 @@ function sumValue() {
 }
 
 number.addEventListener("change", (el) => {
-  if (!tdInput[tdIndex].classList.contains("sum")) {
+  if (!tdInput[tdIndex]?.classList.contains("sum")) {
     toNumber(el, "number");
     numbers = document.querySelectorAll(".number");
     numbers.forEach((num) => replaceInput(num));
   } else {
-    alert("O bloco já é usaddo para guardar número");
+    alert("O bloco já é usaddo para guardar soma!");
     el.target.checked = false;
   }
   sumValue();
 });
 
 let sumExists = false;
-
 sum.addEventListener("change", (el) => {
   const exists = document.querySelector(".sum");
   if (exists) {
-    const res = confirm("Outro bloco já está guardando a soma, deseja mudar?");
-    if (res === true) return;
+    if (exists === tdInput[tdIndex]) {
+      const res = confirm("Deseja desativar a função de soma desse bloco?");
+      if (res === true) {
+        exists.classList.remove("sum");
+        el.target.checked = false;
+      } else {
+        el.target.checked = true;
+        return;
+      }
+    }
   }
-  if (tdInput[tdIndex].classList.contains("number")) {
+  if (tdInput[tdIndex]?.classList.contains("number")) {
     const res = confirm(
       "Esse bloco já é usado para guardar número, deseja mudar?"
     );
     if (res === false) {
       el.target.checked = false;
+      number.checked = true;
+      return;
+    } else if (res === true) {
+      el.target.checked = true;
+      number.checked = false;
+      exists?.classList.remove("sum");
+      tdInput[tdIndex].classList.remove("number");
+      tdInput[tdIndex].classList.add("sum");
       return;
     }
   }
@@ -236,7 +254,6 @@ function tirarFoco() {
     tdInput[tdIndex].blur();
   });
 }
-
 // gerar pdf
 const generetePDF = document.querySelector("#pdf");
 generetePDF.addEventListener("click", () => {
