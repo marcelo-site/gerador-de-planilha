@@ -19,6 +19,8 @@ const number = document.querySelector("#number");
 const sum = document.querySelector("#sum");
 let numbers = document.querySelectorAll(".number");
 const alinharText = document.querySelector("select");
+const copy = document.querySelector("#copy")
+const paste = document.querySelector("#paste")
 
 let deleteblockTrue = false;
 let tdIndex = -1;
@@ -82,6 +84,49 @@ function tdEventListener() {
   });
 }
 tdEventListener();
+
+const msg = document.querySelector('#message')
+let styleTd = ''
+let styleInput = ''
+let tdCol = 1
+let tdRow = 1
+function copyStyle () {
+  if(tdIndex >= 0) {
+    tdCol = td[tdIndex].getAttribute('colspan')
+    tdRow = td[tdIndex].getAttribute('rowspan')
+    styleTd = td[tdIndex].getAttribute("style");
+    styleInput = tdInput[tdIndex].getAttribute("style");
+    msg.innerHTML = 'Esltilo copiado!'
+    msg.style.display = ''
+    setTimeout(() => {
+      copy.checked = false
+      msg.style.display = 'none'
+    }, 3 * 1000)
+  }
+}
+
+copy.addEventListener('change', (el) => {
+  if(el.target.checked) copyStyle()
+})
+
+function pasteStyle () {
+  if(tdIndex >= 0) {
+    td[tdIndex].setAttribute('colspan', tdCol)
+    td[tdIndex].setAttribute('rowspan', tdRow)
+    td[tdIndex].style = styleTd
+    tdInput[tdIndex].style = styleInput
+    msg.innerHTML = 'Esltilo colado aqui!'
+    msg.style.display = ''
+    setTimeout(() => {
+      paste.checked = false
+      msg.style.display = 'none'
+    }, 3 * 1000)
+  }
+}
+
+paste.addEventListener('change', (el) => {
+  if(el.target.checked && tdIndex >= 0) pasteStyle()
+})
 
 size.addEventListener("change", (el) => {
   if (tdIndex >= 0) td[tdIndex].style.width = `${el.target.value}px`;

@@ -23,7 +23,9 @@ main {
   transition: 0.2s;
 }
 
-h1,h2,h3 {
+h1,
+h2,
+h3 {
   color: var(--color);
 }
 
@@ -57,7 +59,8 @@ table input {
   margin: auto;
   width: 100%;
   background-color: transparent;
-   padding: 3px 5px;
+  padding: 3px 5px;
+  cursor: pointer;
 }
 
 table tr:nth-child(odd) {
@@ -120,7 +123,7 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-input:checked{
+input:checked {
   background-color: var(--color);
 }
 
@@ -138,7 +141,7 @@ aside button {
 }
 
 .btn:hover {
-  opacity: .8;
+  opacity: 0.8;
 }
 
 aside > div#etilos {
@@ -146,7 +149,8 @@ aside > div#etilos {
 }
 
 #acoes > div > span,
-#etilos > div, .grid-two {
+#etilos > div,
+.grid-two {
   display: grid;
   grid-template-columns: 1fr 82px;
 }
@@ -156,6 +160,53 @@ aside > div#etilos {
 
 input[type="text"]:focus {
   background-color: white;
+}
+
+#message {
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  position: fixed;
+  background-color: #2b57b6;
+  color: white;
+  top: 50%;
+  right: 50px;
+  border-radius: 5px;
+  z-index: 1000;
+  transform-style: preserve-3d;
+  animation: slidein .5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes slidein {
+  from {
+    right: 0px;
+    opacity: 0;
+  }
+  to {
+    right: 50px;
+    opacity: 1;
+  }
+}
+
+#message::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 5px;
+  width: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  animation: time 3s forwards;
+}
+
+@keyframes time {
+  0% {
+      width: 0px;
+  }
+
+  100% {
+      width: 100%;
+  }
 }
 
 @media print {
