@@ -1,7 +1,9 @@
 const colTable = document.querySelectorAll("#colTable span");
+const tbody = document.querySelector("tbody");
 const main = document.querySelector("main");
 const table = document.querySelector("table");
 const colspan = document.querySelector("#colspan");
+let tr = document.querySelectorAll("tr");
 let td = document.querySelectorAll("td");
 let tdInput = document.querySelectorAll("td input");
 const fontsize = document.querySelector("#font-size");
@@ -18,26 +20,59 @@ const asideBefore = document.querySelector("span.arrow");
 const number = document.querySelector("#number");
 const sum = document.querySelector("#sum");
 let numbers = document.querySelectorAll(".number");
-const alinharText = document.querySelector("select");
+const textAlign = document.querySelector("select");
 const copy = document.querySelector("#copy");
 const paste = document.querySelector("#paste");
+const div = document.querySelector("#div");
+const dialog = document.querySelector("dialog");
+const closeDialog = document.querySelector("dialog #cancel");
+const okDialog = document.querySelector("dialog #ok");
+const inputDialog = document.querySelector("dialog input");
+
+function sumValue() {
+  const sumTd = document.querySelector(".sum");
+  if (sumTd) {
+    numbers = document.querySelectorAll(".number");
+    if (numbers.length > 0) {
+      const arr = Array.from(numbers).map((num) => {
+        const value = parseFloat(num.value.replace(".", "").replace(",", "."));
+        return value;
+      });
+      const value = arr.reduce((acc, cur) => parseFloat(cur) + acc, 0);
+      sumTd.value = value.toLocaleString("pt-br", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      if (sumTd.value === "NaN") sumTd.value = "soma";
+    }
+  }
+}
 
 let deleteblockTrue = false;
 let tdIndex = -1;
+let indexRow = -1;
 
 colTable[0].addEventListener("click", (el) => {
+  dialog.showModal();
+});
+
+okDialog.addEventListener("click", () => {
+  dialog.close();
   const tr = document.querySelectorAll("tr");
   tr.forEach((row) => {
     const td = document.createElement("td");
     td.colSpan = 1;
     td.rowSpan = 1;
-    td.style.width = "200px";
+    td.style.width = inputDialog.value + "px";
+
     const input = document.createElement("input");
     input.type = "text";
+    input.style.textAlign = "center";
     input.spellcheck = false;
     td.append(input);
     row.appendChild(td);
   });
+  inputDialog.value = 50;
   tdEventListener();
 });
 
@@ -47,7 +82,7 @@ colTable[1].addEventListener("click", (el) => {
   if (length === 1) {
     alert("Essa é a ultima coluna!");
   } else {
-    const res = confirm("Tem certeza que deseja deletar um,a coluna?");
+    const res = confirm("Tem certeza que deseja deletar uma coluna?");
     if (res === true) {
       if (length > 1) {
         tr.forEach((row) => row.removeChild(row.lastChild));
@@ -57,63 +92,59 @@ colTable[1].addEventListener("click", (el) => {
   }
   tdEventListener();
 });
+closeDialog.addEventListener("click", () => dialog.close());
 
-function getStyle(el) {
-  const node = el.getAttribute("style");
-  if (node) {
-    const arr = node.split(";");
-    const value = arr.filter((element) => {
-      const width = element.split(":");
-      if (width[0] === "width") {
-        size.value = width[1].replace(" ", "").replace("px", "");
-        return;
-      }
-    });
-    if (!value) size.value = el.clientWidth;
-  } else {
-    size.value = el.clientWidth;
+function copyPaste(e) {
+  if ((e.shiftKey && e.altKey && e.key === "c") || e.key === "C") {
+    copyStyle();
+  }
+  if ((e.shiftKey && e.altKey && e.key === "v") || e.key === "V") {
+    pasteStyle();
   }
 }
 
+function setStyleInfo(element) {
+  fontsize.value = element?.style?.fontSize.replace("px", "") || 16;
+  element.classList.contains("number")
+    ? (number.checked = true)
+    : (number.checked = false);
+  element.classList.contains("sum")
+    ? (sum.checked = true)
+    : (sum.checked = false);
+}
+
 function tdEventListener() {
+  tr = document.querySelectorAll("tr");
+  tr.forEach((el, i) => el.addEventListener("click", (el) => (indexRow = i)));
   td = document.querySelectorAll("td");
-  td.forEach((el, i) => {
-    el.addEventListener("click", () => {
-      td.forEach((e) => (e.style.backgroundColor = ""));
+  numbers = document.querySelectorAll(".number");
+  tdInput = document.querySelectorAll("td input");
+  if (tdInput.length > 1) deleteblockTrue = true;
+  else deleteblockTrue = false;
+
+  tdInput.forEach((element, i) => {
+    element.addEventListener("keydown", copyPaste);
+
+    element.addEventListener("focus", () => {
+      div.value = "";
+      setStyleInfo(element);
+      const align = tdInput[i]?.style?.textAlign;
+      textAlign.value = align.replace(" ", "");
+
       tdIndex = i;
-      colspan.value = el.getAttribute("colspan") || 1;
-      linhas.value = el.getAttribute("rowspan") || 1;
+      colspan.value = td[i].getAttribute("colspan") || 1;
+      linhas.value = td[i].getAttribute("rowspan") || 1;
       td.forEach((e) => (e.style.backgroundColor = ""));
+
       tdInput[i]?.style?.fontWeight === "bold"
         ? (negrito.checked = true)
         : (negrito.checked = false);
-
-      getStyle(el);
-    });
-
-    tdInput = document.querySelectorAll("td input");
-    if (tdInput.length > 1) {
-      deleteblockTrue = true;
-    } else {
-      deleteblockTrue = false;
-    }
-
-    tdInput.forEach((element, i) => {
-      element.addEventListener(
-        "focus",
-        () => {
-          fontsize.value = element?.style?.fontSize.replace("px", "") || 16;
-          element.classList.contains("number")
-            ? (number.checked = true)
-            : (number.checked = false);
-          element.classList.contains("sum")
-            ? (sum.checked = true)
-            : (sum.checked = false);
-
-          getStyle(el);
-        },
-        el.addEventListener("change", sumValue)
-      );
+      const width = td[i]?.style?.width;
+      size.value = width.replace(" ", "").replace("px", "");
+      element.addEventListener("change", () => {
+        sumValue();
+        division();
+      });
     });
   });
 }
@@ -189,11 +220,10 @@ linhas.addEventListener("change", (el) => {
   if (tdIndex >= 0) td[tdIndex].setAttribute("rowspan", el.target.value);
 });
 
-alinharText.addEventListener("change", (el) => {
-  if (tdIndex >= 0) {
+textAlign.addEventListener("change", (el) => {
+  if (tdIndex >= 0)
     tdInput[tdIndex].style.textAlign =
       el.target.options[el.target.selectedIndex].value;
-  }
 });
 
 // action
@@ -215,7 +245,6 @@ duplicarLinha.addEventListener("click", () => {
       .forEach((el) => (el.style.backgroundColor = ""));
     data.insertAdjacentHTML("afterend", data.outerHTML);
   }
-  td = document.querySelectorAll("td");
   tdEventListener();
 });
 
@@ -229,6 +258,30 @@ delBlock.addEventListener("click", () => {
       } else {
         td[tdIndex].style.backgroundColor = "";
       }
+      tr = document.querySelectorAll("tr");
+      tr.forEach((el) => {
+        const child = el.querySelector("td");
+        if (!child) {
+          const parent = el.parentNode;
+          parent.removeChild(el);
+        }
+      });
+    }, 500);
+  }
+});
+tr.forEach((el, i) => el.addEventListener("click", (el) => (indexRow = i)));
+
+delRow.addEventListener("click", () => {
+  tr = document.querySelectorAll("tr");
+  if (indexRow >= 0 && tr.length > 1) {
+    tr[indexRow].style.backgroundColor = "red";
+    setTimeout(() => {
+      const res = confirm("Desja deletar uma linha?");
+      if (res === true) {
+        tbody.removeChild(tr[indexRow]);
+      } else {
+        tr[indexRow].style.backgroundColor = "";
+      }
     }, 500);
   }
 });
@@ -240,114 +293,128 @@ function toNumber(el, className) {
   }
 }
 
-const replaceInput = (el) => {
-  el.addEventListener("input", function () {
+const replaceInput = (el, bool) => {
+  function replace() {
     this.value = this.value.replace(/[^0-9.|,]/g, "").replace(/(\*?)\*/g, "$1");
-  });
+  }
+  if (bool) {
+    el.addEventListener("input", replace);
+  } else {
+    el.removeEventListener("input", replace);
+  }
 };
 
-function sumValue() {
-  const sum = document.querySelector(".sum");
-  if (sum) {
-    numbers = document.querySelectorAll(".number");
-    if (numbers.length > 0) {
-      const arr = [];
-      numbers.forEach((num) => {
-        const value = parseFloat(num.value.replace(".", "").replace(",", "."));
-        arr.push(value);
-      });
-      const value = arr.reduce((acc, cur) => parseFloat(cur) + acc, 0);
-      sum.value = value.toLocaleString("pt-br", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    }
-  }
-}
-
-number.addEventListener("change", (el) => {
-  if (!tdInput[tdIndex]?.classList.contains("sum")) {
-    toNumber(el, "number");
-    numbers = document.querySelectorAll(".number");
-    numbers.forEach((num) => replaceInput(num));
-  } else {
-    alert("O bloco já é usaddo para guardar soma!");
-    el.target.checked = false;
-  }
-  sumValue();
-});
-
-let sumExists = false;
-sum.addEventListener("change", (el) => {
-  const exists = document.querySelector(".sum");
-  if (exists) {
-    if (exists === tdInput[tdIndex]) {
-      const res = confirm("Deseja desativar a função de soma desse bloco?");
+function setFuncBlock(el, param, check) {
+  if (el.target.checked) {
+    const exists = tdInput[tdIndex].getAttribute("class");
+    tdInput[tdIndex].setAttribute("data-div", "");
+    if (!exists) {
+      toNumber(el, param);
+      numbers = document.querySelectorAll("." + param);
+      numbers.forEach((element) => replaceInput(element, true));
+    } else {
+      const res = confirm(
+        "O bloco já é usaddo para guardar soma ou divisão, deseja mudar?"
+      );
       if (res === true) {
-        exists.classList.remove("sum");
-        el.target.checked = false;
-      } else {
+        tdInput[tdIndex].setAttribute("class", "");
+        toNumber(el, param);
+        numbers = document.querySelectorAll("." + param);
+        numbers.forEach((element) => replaceInput(element, true));
         el.target.checked = true;
-        return;
+        check.checked = false;
+      } else {
+        el.target.checked = false;
       }
     }
+  } else {
+    tdInput[tdIndex].setAttribute("class", "");
   }
-  if (tdInput[tdIndex]?.classList.contains("number")) {
-    const res = confirm(
-      "Esse bloco já é usado para guardar número, deseja mudar?"
-    );
-    if (res === false) {
-      el.target.checked = false;
-      number.checked = true;
-      return;
-    } else if (res === true) {
-      el.target.checked = true;
-      number.checked = false;
-      exists?.classList.remove("sum");
-      tdInput[tdIndex].classList.remove("number");
-      tdInput[tdIndex].classList.add("sum");
-      return;
+  sumValue();
+  division();
+}
+
+number.addEventListener("change", function (el) {
+  if (tdIndex >= 0) {
+    setFuncBlock(el, "number", sum);
+  } else {
+    alert("Não há objeto selcionado!");
+    el.target.checked = false;
+  }
+});
+
+sum.addEventListener("change", (el) => {
+  if (tdIndex >= 0) {
+    setFuncBlock(el, "sum", number);
+  } else {
+    alert("Não ha objeto selecionado!");
+    el.target.checked = false;
+  }
+});
+
+function division(param, parm2) {
+  const sumTd = document.querySelector(".sum");
+  let func = tdInput[tdIndex].getAttribute("class");
+
+  if (tdIndex >= 0 && parm2 === "div" && func !== "div") {
+    if (!!func) {
+      let v = "";
+      if (func === "number") v = "numero";
+      else if (func === "sum") v = "soma";
+      const res = confirm(
+        "Deseja mudar esse bloco de " + v + " soma para divisão?"
+      );
+      if (res === true) {
+        tdInput[tdIndex].setAttribute("class", "");
+        tdInput[tdIndex].classList.add("div");
+        tdInput[tdIndex].setAttribute("data-div", param.value);
+        sum.checked = false;
+        number.checked = false;
+      } 
+      // else return;
     }
   }
-  toNumber(el, "sum");
-  sumValue();
+  const valuesum = sumTd?.value.replace(".", "").replace(",", ".");
+  const divisions = document.querySelectorAll(".div");
+  divisions.forEach((el) => {
+    const perc = parseInt(el.getAttribute("data-div")) / 100;
+    const value = parseFloat(valuesum) * perc;
+    el.value = value.toLocaleString("pt-br", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    if (el.value === "NaN") el.value = "divisão " + el.getAttribute("data-div");
+  });
+}
+
+div.addEventListener("change", (el) => {
+  if (tdIndex >= 0) {
+    sumValue();
+    division(el.target, "div");
+    const div = document.querySelectorAll(".div");
+
+    div.forEach((e) => {
+      e.addEventListener("click", () => {
+        el.target.value = e.getAttribute("data-div");
+      });
+    });
+  } else {
+    alert("Não há elemento selecinando!");
+  }
 });
 
 let showAside = false;
 asideBefore.addEventListener("click", (el) => {
   showAside = !showAside;
   if (showAside) {
-    aside.style.transform = "translateX(5px)";
+    aside.style.transform = "translateX(10px)";
     main.style.width = "calc(100vw - 20px)";
     el.target.style.right = "0";
     el.target.style.transform = "rotateY(0deg)";
   } else {
     aside.style.transform = "translateX(0px)";
     main.style.width = "";
-    el.target.style.right = "255px";
+    el.target.style.right = "285px";
     el.target.style.transform = "rotateY(180deg)";
   }
-});
-
-// function tirarFoco() {
-//   td.forEach((el) => {
-//     el.style.backgroundColor = "";
-//     tdInput[tdIndex].blur();
-//   });
-// }
-// gerar pdf
-const generetePDF = document.querySelector("#pdf");
-generetePDF.addEventListener("click", () => {
-  // tirarFoco();
-  const content = document.querySelector("table");
-  const date = new Date.now();
-  const options = {
-    margin: 1,
-    filename: `${date}-planilha.pdf`,
-    html2canvas: { sacle: 1 },
-    pagebreak: { avoid: "tr" },
-    image: { type: "jpeg", quality: 0.98 },
-    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-  };
-  html2pdf().set(options).from(content).save();
 });

@@ -3,126 +3,148 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gerador de Planilha</title>
+    <title>Planilha</title>
     <link rel="stylesheet" href="style.css" />
+
+    <script src="index.js" defer></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
       integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <script src="index.js" defer></script>
+    <script src="generate-pdf.js" defer></script>
   </head>
 
   <body>
     <main>
-      <h1>Gerador de Planilha - simples</h1>
+      <h1>PLANILHA</h1>
       <div>
         <table>
           <tr>
-            <td colspan="1" rowspan="1" style="width: 200px">
-              <input type="text"  spellcheck="false"/>
+            <td colspan="1" rowspan="1" style="width: 50px">
+              <input
+                type="text"
+                spellcheck="false"
+                style="text-align: center"
+              />
             </td>
           </tr>
         </table>
       </div>
     </main>
-    <span class="arrow" style="transform: rotateY(180deg); right: 255px;">⏴</span>
+    <span class="arrow" style="transform: rotateY(180deg); right: 285px"
+      >⏴</span
+    >
     <aside>
-      <div id="aside">
-        <div>
-          <div id="colTable">Colunas na tabela: <span class="btn">+</span>
-             <span class="btn" style="padding: 1px 6px">-</span>
-          </div>
-        </div>
-        <div id="estilos">
-          <h3>Estilos</h3>
-          <div>
-            <label for="colspan">Quantide de colunas: </label>
-            <input
-              type="number"
-              name="col-size"
-              id="colspan"
-              min="1"
-              value="1"
-            />
-          </div>
-          <div>
-            <label for="linhas">Quantidade de linhas: </label>
-            <input type="number" name="linhas" id="linhas" min="1" value="1" />
-          </div>
-          <div>
-            <label for="font-size">Tamanho da fonte: </label>
-            <input
-              type="number"
-              name="font-size"
-              id="font-size"
-              min="1"
-              value="16"
-            />
-          </div>
-          <div>
-            <label for="size">Largura do bloco: </label>
-            <input type="number" name="size" id="size" />
-          </div>
-          <div>
-            <label for="negrito">Texto em negrito: </label>
-            <input type="checkbox" name="negrito" id="negrito" />
-          </div>
-          <div>
-            <label for="position-text">Alinhamento do texto: </label>
-            <select name="position-text" id="position-text">
-                <option value="right">Direita</option>
-                <option value="center" selected>Centro</option>
-                <option value="left">Esquerda</option>
-            </select>
-          </div>
-          <div>
-            <label for="copy">Copiar estilo: </label>
-            <input type="checkbox" name="copy" id="copy"/>
-          </div>
-          <div >
-            <label for="paste">Colar estilo: </label>
-            <input type="checkbox" name="paste" id="paste"  style="margin-left: -64px;"/>
-          </div>
-
-        </div>
-        <hr />
-
-        <div id="acoes">
-          <h3>Ações</h3>
-          <div>
-            <span id="blocoplus"
-              >Duplicar bloco atual:
-              <span><span class="btn">+</span></span></span
-            >
-          </div>
-          <div>
-            <span id="linhaplus"
-              >Duplicar linha atual:
-              <span><span class="btn">+</span></span></span
-            >
-          </div>
-          <div>
-            <span id="del-block"
-              >Deletar bloco atual:
-              <span>
-                <span class="btn" style="padding: 1px 6px">-</span>
-              </span>
-            </span>
-          </div>
-          <div class="grid-two">
-            <label for="number">Guardar número: </label>
-            <input type="checkbox" name="number" id="number" style="width: 70px;"/>
-          </div>
-          <div class="grid-two">
-            <label for="sum">Guardar soma: </label>
-            <input type="checkbox" name="sum" id="sum" style="width: 70px;"/>
-          </div>
-          <button class="btn" id="pdf">Gerar PDF</button>
+      <div>
+        <div id="colTable" class="flex-end">
+          Colunas na tabela: <span class="btn">+</span>
+          <span class="btn minus">-</span>
         </div>
       </div>
+      <div id="estilos">
+        <h3>Estilos</h3>
+        <div>
+          <label for="colspan">Quantide de colunas: </label>
+          <input type="number" name="col-size" id="colspan" min="1" value="1" />
+        </div>
+        <div>
+          <label for="linhas">Quantidade de linhas: </label>
+          <input type="number" name="linhas" id="linhas" min="1" value="1" />
+        </div>
+        <div>
+          <label for="font-size">Tamanho da fonte: </label>
+          <input
+            type="number"
+            name="font-size"
+            id="font-size"
+            min="1"
+            value="16"
+          />
+        </div>
+        <div>
+          <label for="size">Largura do bloco: </label>
+          <input type="number" name="size" id="size" />
+        </div>
+        <div>
+          <label for="negrito">Texto em negrito: </label>
+          <input type="checkbox" name="negrito" id="negrito" />
+        </div>
+        <div>
+          <label for="position-text">Alinhamento do texto: </label>
+          <select name="position-text" id="position-text">
+            <option value="right">Direita</option>
+            <option value="center" selected>Centro</option>
+            <option value="left">Esquerda</option>
+          </select>
+        </div>
+        <div>
+          <label for="copy">Copiar estilo: </label>
+          <input type="checkbox" name="copy" id="copy" />
+        </div>
+        <div>
+          <label for="paste">Colar estilo: </label>
+          <input
+            type="checkbox"
+            name="paste"
+            id="paste"
+            style="margin-left: -64px"
+          />
+        </div>
+      </div>
+
+      <div id="acoes">
+        <h3>Ações</h3>
+        <div class="grid">
+          <button id="blocoplus" class="btn">Adicionar bloco</button>
+          <button id="del-block" class="btn">Deletar bloco</button>
+        </div>
+        <div class="grid">
+          <button id="linhaplus" class="btn">Adicionar linha</button>
+          <button id="del-row" class="btn">Deletar linha</button>
+        </div>
+        <div
+          class="flex"
+          style="justify-content: space-around; margin-top: 1em"
+        >
+          <div>
+            <label for="number">Número:</label>
+            <input type="checkbox" name="number" id="number" value="50" />
+          </div>
+          <div>
+            <label for="sum">Soma:</label>
+            <input type="checkbox" name="sum" id="sum" />
+          </div>
+          <div class="flex-end"></div>
+          <label for="div">Divisão: </label>
+          <input type="number" id="div" value="" />
+        </div>
+      </div>
+      <div id="save" class="flex">
+        <button class="btn" id="pdf">Gerar PDF</button>
+        <p>
+          Feito por
+          <a
+            href="https://www.facebook.com/profile.php?id=100015225941991"
+            target="_blank"
+            >Marcelo</a
+          >
+        </p>
+      </div>
     </aside>
-    <div id="message" style="display: none;">Minha mensagem</div>
+    <div id="message" style="display: none">Minha mensagem</div>
+    <dialog>
+      <div>
+        <div>
+          <label for="size-new-column">Tamanho da nova coluna:</label>
+        </div>
+        <div class="flex">
+          <input type="number" id="size-new-column" value="50" />
+          <button class="btn" id="ok">OK</button>
+          <button class="btn" id="cancel">Cancelar</button>
+        </div>
+      </div>
+    </dialog>
   </body>
 </html>
