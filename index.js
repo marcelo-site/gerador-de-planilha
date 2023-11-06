@@ -306,26 +306,34 @@ const replaceInput = (el, bool) => {
 
 function setFuncBlock(el, param, check) {
   if (el.target.checked) {
-    const exists = tdInput[tdIndex].getAttribute("class");
-    tdInput[tdIndex].setAttribute("data-div", "");
-    if (!exists) {
+    let exists = null;
+    if (!!tdInput[tdIndex].getAttribute("data-div")) {
+      const res = confirm("Esse bloco é usado para divisão desja mudar?");
+      if (res === true) {
+        tdInput[tdIndex].setAttribute("data-div", "");
+        return;
+      }
+    } else exists = document.querySelector(".sum");
+    // tdInput[tdIndex].classList.contains('sum');
+
+    if ((!exists && param === "sum") || param !== "sum") {
       toNumber(el, param);
       numbers = document.querySelectorAll("." + param);
       numbers.forEach((element) => replaceInput(element, true));
     } else {
-      const res = confirm(
-        "O bloco já é usaddo para guardar soma ou divisão, deseja mudar?"
-      );
-      if (res === true) {
-        tdInput[tdIndex].setAttribute("class", "");
-        toNumber(el, param);
-        numbers = document.querySelectorAll("." + param);
-        numbers.forEach((element) => replaceInput(element, true));
-        el.target.checked = true;
-        check.checked = false;
-      } else {
-        el.target.checked = false;
-      }
+      // const res = 
+      alert("Outro bloco já é usado para soma, deseja mudar?");
+      el.target.checked = false;
+      // if (res === true) {
+      //   tdInput[tdIndex].setAttribute("class", "");
+      //   toNumber(el, param);
+      //   numbers = document.querySelectorAll("." + param);
+      //   numbers.forEach((element) => replaceInput(element, true));
+      //   el.target.checked = true;
+      //   check.checked = false;
+      // } else {
+      //   el.target.checked = false;
+      // }
     }
   } else {
     tdInput[tdIndex].setAttribute("class", "");
@@ -345,7 +353,8 @@ number.addEventListener("change", function (el) {
 
 sum.addEventListener("change", (el) => {
   if (tdIndex >= 0) {
-    setFuncBlock(el, "sum", number);
+    if (!el.target.classList.contains("sum")) setFuncBlock(el, "sum", number);
+    else alert("Outro bloco já esta sendo usado para soma!");
   } else {
     alert("Não ha objeto selecionado!");
     el.target.checked = false;
@@ -354,31 +363,32 @@ sum.addEventListener("change", (el) => {
 
 function division(param, parm2) {
   const sumTd = document.querySelector(".sum");
-  let func = tdInput[tdIndex].getAttribute("class");
-
-  if (tdIndex >= 0 && parm2 === "div" && func !== "div") {
-    if (!!func) {
-      let v = "";
-      if (func === "number") v = "numero";
-      else if (func === "sum") v = "soma";
-      const res = confirm(
-        "Deseja mudar esse bloco de " + v + " soma para divisão?"
-      );
-      if (res === true) {
-        tdInput[tdIndex].setAttribute("class", "");
-        tdInput[tdIndex].classList.add("div");
-        tdInput[tdIndex].setAttribute("data-div", param.value);
-        sum.checked = false;
-        number.checked = false;
-      } 
-      // else return;
+  if (parm2) {
+    const func = tdInput[tdIndex].getAttribute("class");
+    if (parm2 !== func) {
+      if (!!func) {
+        let v = "";
+        if (func === "number") v = "numero";
+        else if (func === "sum") v = "soma";
+        const res = confirm(
+          "Deseja mudar esse bloco de " + v + " soma para divisão?"
+        );
+        if (res === true) {
+          sum.checked = false;
+          number.checked = false;
+        } else return;
+      }
     }
+  }
+  if (parm2 === "div") {
+    tdInput[tdIndex].setAttribute("class", "div");
+    tdInput[tdIndex].setAttribute("data-div", param.value);
   }
   const valuesum = sumTd?.value.replace(".", "").replace(",", ".");
   const divisions = document.querySelectorAll(".div");
   divisions.forEach((el) => {
-    const perc = parseInt(el.getAttribute("data-div")) / 100;
-    const value = parseFloat(valuesum) * perc;
+    const percent = parseInt(el.getAttribute("data-div")) / 100;
+    const value = parseFloat(valuesum) * percent;
     el.value = value.toLocaleString("pt-br", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,

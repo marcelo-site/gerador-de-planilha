@@ -9,7 +9,7 @@
 :root {
   --bd-color: #7d7d7d;
   --color: #2626b7;
-  --border-color: 
+  --border-color: ;
 }
 
 body {
@@ -158,16 +158,30 @@ aside div {
   cursor: pointer;
 }
 
+.btn.minus {
+  padding: 2px 6px;
+}
+
 span.btn {
   padding: 2px 4px;
 }
 
 .btn:hover {
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
 aside #estilos input[type="checkbox"] {
   margin-left: -64px;
+}
+
+.copy-paste {
+  display: flex !important;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.copy-paste > div input {
+  margin: 0 !important;
 }
 
 #acoes > div > span,
@@ -209,7 +223,7 @@ input[type="text"]:focus {
   border-radius: 5px;
   z-index: 1000;
   transform-style: preserve-3d;
-  animation: slidein .5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slidein 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 @keyframes slidein {
@@ -236,11 +250,11 @@ input[type="text"]:focus {
 
 @keyframes time {
   0% {
-      width: 0px;
+    width: 0px;
   }
 
   100% {
-      width: 100%;
+    width: 100%;
   }
 }
 
@@ -254,6 +268,7 @@ input[type="text"]:focus {
   display: flex;
   justify-content: end;
   align-items: center;
+  gap: 5px;
 }
 
 .grid {
