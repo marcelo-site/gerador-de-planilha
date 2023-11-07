@@ -1,12 +1,11 @@
-// const { info } = require("console");
 const {
   app,
   BrowserWindow,
   Menu,
   dialog,
-  //   ipcMain,
+  // ipcMain,
   shell,
-  //   webContents,
+  // webContents,
 } = require("electron");
 const fs = require("fs");
 const path = require("path");

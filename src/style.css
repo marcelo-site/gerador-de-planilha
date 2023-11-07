@@ -16,6 +16,11 @@ body {
   display: grid;
   grid-template-columns: 1fr 300px;
   transition: all .3s;
+  margin-bottom: 3em;
+}
+
+body::-webkit-scrollbar { 
+	display: none;
 }
 
 .mg-top {
@@ -179,7 +184,6 @@ input:checked {
 
 aside div {
   margin: 6px 3px;
-  /* padding: 3px 2px 4px 6px */
 }
 
 .btn {
@@ -317,9 +321,11 @@ input[type="text"]:focus {
   left: 40%;
   margin: auto;
   z-index: 100;
+  padding: .5em;
 }
 
 .modal > div {
+  font-size: 18px;
   margin: 0.6em;
 }
 
@@ -337,6 +343,9 @@ input[type="text"]:focus {
 }
 
 @media print {
+  body {
+    margin-bottom: 0;
+  }
   .mg-top {
     display: none;
   }

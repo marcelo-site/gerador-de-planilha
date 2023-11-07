@@ -1,26 +1,14 @@
 const colTable = document.querySelectorAll("#colTable span");
 const tbody = document.querySelector("tbody");
-const main = document.querySelector("main");
-const table = document.querySelector("table");
 const colspan = document.querySelector("#colspan");
 let tr = document.querySelectorAll("tr");
 let td = document.querySelectorAll("td");
 let tdInput = document.querySelectorAll("td input");
-const fontsize = document.querySelector("#font-size");
-const negrito = document.querySelector("#negrito");
-const colunas = document.querySelector("#colunas");
-const linhas = document.querySelector("#linhas");
-const size = document.querySelector("#size");
 const duplicarBloco = document.querySelector("#blocoplus");
 const duplicarLinha = document.querySelector("#linhaplus");
 const delBlock = document.querySelector("#del-block");
 const delRow = document.querySelector("#del-row");
-const aside = document.querySelector("aside");
-const asideBefore = document.querySelector("span.arrow");
-const number = document.querySelector("#number");
-const sum = document.querySelector("#sum");
 let numbers = document.querySelectorAll(".number");
-const textAlign = document.querySelector("select");
 const copy = document.querySelector("#copy");
 const paste = document.querySelector("#paste");
 const div = document.querySelector("#div");
@@ -30,7 +18,12 @@ const okDialog = document.querySelector("#dialog [data-ok]");
 const inputDialog = document.querySelector("#dialog input");
 const back = document.querySelector("#background");
 const body = document.querySelector("body");
-let paramFn = null;
+
+import { estilos, textAlign, setStyleInfo } from "./estilos.js";
+estilos();
+
+let tdIndex = -1;
+let indexRow = -1;
 
 function sumValue() {
   const sumTd = document.querySelector(".sum");
@@ -50,9 +43,6 @@ function sumValue() {
     }
   }
 }
-
-let tdIndex = -1;
-let indexRow = -1;
 
 colTable[0].addEventListener("click", (el) => {
   dialog.style.display = "";
@@ -94,14 +84,9 @@ colTable[1].addEventListener("click", (el) => {
   const tr = document.querySelectorAll("tr");
   const length = tr[0].querySelectorAll("td").length;
   if (length === 1) {
-    showModal1("Essa é a ultima coluna!");
+    showModal("Essa é a ultima coluna!");
   } else {
-    paramFn = confirmdelColunm;
-    showConfirm(
-      "Tem certeza que deseja deletar uma coluna?",
-      confirmdelColunm,
-      true
-    );
+    showConfirm("Deseja deletar uma coluna?", confirmdelColunm, true);
   }
   tdEventListener();
 });
@@ -120,16 +105,6 @@ function copyPaste(e) {
   }
 }
 
-function setStyleInfo(element) {
-  fontsize.value = element?.style?.fontSize.replace("px", "") || 16;
-  element.classList.contains("number")
-    ? (number.checked = true)
-    : (number.checked = false);
-  element.classList.contains("sum")
-    ? (sum.checked = true)
-    : (sum.checked = false);
-}
-
 function tdEventListener() {
   tr = document.querySelectorAll("tr");
   tr.forEach((el, i) => el.addEventListener("click", (el) => (indexRow = i)));
@@ -139,7 +114,6 @@ function tdEventListener() {
 
   tdInput.forEach((element, i) => {
     element.addEventListener("keydown", copyPaste);
-
     element.addEventListener("focus", () => {
       div.value = "";
       setStyleInfo(element);
@@ -170,6 +144,7 @@ let styleTd = "";
 let styleInput = "";
 let tdCol = 1;
 let tdRow = 1;
+
 function copyStyle() {
   td = document.querySelectorAll("td");
   if (tdIndex >= 0) {
@@ -182,17 +157,16 @@ function copyStyle() {
     setTimeout(() => (copy.checked = false), 600);
     setTimeout(() => (msg.style.display = "none"), 3 * 1000);
   } else {
-    showModal1("Não há objeto selecionado!");
+    showModal("Não há objeto selecionado!");
     copy.checked = false;
   }
 }
-
 copy.addEventListener("change", copyStyle);
 
 function pasteStyle() {
   td = document.querySelectorAll("td");
   if (td.length < 2) {
-    showModal1("Não há objeto suficiente!");
+    showModal("Não há objeto suficiente!");
     paste.checked = false;
     return;
   }
@@ -206,43 +180,11 @@ function pasteStyle() {
     setTimeout(() => (paste.checked = false), 600);
     setTimeout(() => (msg.style.display = "none"), 3 * 1000);
   } else {
-    showModal1("Não há objeto selecionado!");
+    showModal("Não há objeto selecionado!");
     paste.checked = false;
   }
 }
-
 paste.addEventListener("change", pasteStyle);
-
-size.addEventListener("change", (el) => {
-  if (tdIndex >= 0) td[tdIndex].style.width = `${el.target.value}px`;
-});
-
-function stylechange(style, value) {
-  if (tdIndex >= 0) tdInput[tdIndex].style[style] = value;
-}
-
-fontsize.addEventListener("change", (el) =>
-  stylechange("fontSize", `${el.target.value}px`)
-);
-
-negrito.addEventListener("change", (el) => {
-  if (el.target.checked) stylechange("fontWeight", "bold");
-  else stylechange("fontWeight", "");
-});
-
-colspan.addEventListener("change", (el) => {
-  if (tdIndex >= 0) td[tdIndex].setAttribute("colspan", el.target.value);
-});
-
-linhas.addEventListener("change", (el) => {
-  if (tdIndex >= 0) td[tdIndex].setAttribute("rowspan", el.target.value);
-});
-
-textAlign.addEventListener("change", (el) => {
-  if (tdIndex >= 0)
-    tdInput[tdIndex].style.textAlign =
-      el.target.options[el.target.selectedIndex].value;
-});
 
 // action
 duplicarBloco.addEventListener("click", () => {
@@ -278,7 +220,7 @@ delBlock.addEventListener("click", async () => {
     showConfirm("Tem certeza que deseja deletar este bloco", confirmDelBlock);
     td[tdIndex].style.backgroundColor = "";
   } else {
-    showModal1("Selecione algum bloco!");
+    showModal("Selecione algum bloco!");
   }
 });
 tr.forEach((el, i) => el.addEventListener("click", (el) => (indexRow = i)));
@@ -294,16 +236,16 @@ delRow.addEventListener("click", async () => {
     await new Promise((resolve) => setTimeout(resolve, 600));
     showConfirm("Tem certeza que deseja deletar este bloco", confirmDelRow);
   } else if (indexRow < 0) {
-    showModal1("Selecione algum linha!");
+    showModal("Selecione algum linha!");
   } else if (tr.length === 1) {
-    showModal1("Só há uma linha!");
+    showModal("Só há uma linha!");
   }
 });
 
 function toNumber(el, className) {
   if (tdIndex >= 0) {
     if (el.target.checked) tdInput[tdIndex].setAttribute("class", className);
-    else tdInput[tdIndex].classList.remove(className);
+    else tdInput[tdIndex].setAttribute("class", "");
   }
 }
 
@@ -322,7 +264,7 @@ async function setFuncBlock(el, param, check) {
   if (el.target.checked) {
     let exists = null;
     if (!!tdInput[tdIndex].getAttribute("data-div")) {
-      showModal1("Esse bloco já é usado para divisão!");
+      showModal("Esse bloco já é usado para divisão!");
       el.checked = false;
       return;
     } else exists = document.querySelector(".sum");
@@ -334,7 +276,7 @@ async function setFuncBlock(el, param, check) {
       el.target.checked = true;
       check.checked = false;
     } else {
-      showModal1("Outro bloco já é usado para soma!");
+      showModal("Outro bloco já é usado para soma!");
       el.target.checked = false;
       return;
     }
@@ -349,18 +291,17 @@ number.addEventListener("change", function (el) {
   if (tdIndex >= 0) {
     setFuncBlock(el, "number", sum);
   } else {
-    showModal1("Não há objeto selcionado!");
+    showModal("Não há objeto selcionado!");
     el.target.checked = false;
   }
-  showModal1;
 });
 
 sum.addEventListener("change", (el) => {
   if (tdIndex >= 0) {
     if (!el.target.classList.contains("sum")) setFuncBlock(el, "sum", number);
-    else showModal1("Outro bloco já esta sendo usado para soma!");
+    else showModal("Outro bloco já esta sendo usado para soma!");
   } else {
-    showModal1("Não ha objeto selecionado!");
+    showModal("Não ha objeto selecionado!");
     el.target.checked = false;
   }
 });
@@ -404,7 +345,7 @@ function division(param, parm2) {
         if (func === "number") v = "numero";
         else if (func === "sum") v = "soma";
         showConfirm(
-          "Deseja mudar esse bloco de " + v + " para divisão?",
+          "Deseja mudar de " + v + " para divisão?",
           confirmCheckFasle
         );
       }
@@ -437,16 +378,12 @@ function confirmNoneDivision() {
 div.addEventListener("change", (el) => {
   if (tdIndex >= 0) {
     if (parseInt(el.target.value) === 0) {
-      showConfirm(
-        "Tem certeza que deseja mudar esse bloco de divisão?",
-        confirmNoneDivision
-      );
+      showConfirm("Esse bloco será desativado a divisão?", confirmNoneDivision);
       return;
     } else {
       sumValue();
       division(el.target, "div");
       const div = document.querySelectorAll(".div");
-
       div.forEach((e) => {
         e.addEventListener("click", () => {
           el.target.value = e.getAttribute("data-div");
@@ -454,47 +391,31 @@ div.addEventListener("change", (el) => {
       });
     }
   } else {
-    showModal1("Não há elemento selecinando!");
+    showModal("Não há elemento selecionado!");
   }
 });
 
-let showAside = false;
-asideBefore.addEventListener("click", (el, fn) => {
-  showAside = !showAside;
-  if (showAside) {
-    aside.style.transform = "translateX(280px)";
-    main.style.width = "calc(100vw - 20px)";
-    el.target.style.right = "0";
-    el.target.style.transform = "rotateY(0deg)";
-  } else {
-    aside.style.transform = "translateX(0px)";
-    main.style.width = "";
-    el.target.style.right = "276px";
-    el.target.style.transform = "rotateY(180deg)";
-  }
-});
-
-function showModal2(msgDiv) {
+function exitModalBackground(paramMsg) {
   back.style.display = "none";
-  msgDiv.innerHTML = "";
+  paramMsg.innerHTML = "";
   body.style.overflow = "";
 }
 
 const modalMsg = document.querySelector("#modal-msg");
-function showModal1(msg) {
+function showModal(msg) {
   body.style.overflow = "hidden";
   const msgDiv = modalMsg.querySelector("[data-msg]");
   msgDiv.innerHTML = msg;
   const ok = modalMsg.querySelector("[data-ok]");
   ok.addEventListener("click", () => {
     modalMsg.style.display = "none";
-    showModal2(msgDiv);
+    exitModalBackground(msgDiv);
   });
   back.style.display = "";
   modalMsg.style.display = "";
 }
 
-// confirm delete coluna
+// confirm delete coluna elementos
 const modalConfirm = document.querySelector("#modal-confirm");
 const okConfirm = modalConfirm.querySelector("[data-ok]");
 
@@ -510,7 +431,7 @@ function showConfirm(msg, param, param2) {
   okConfirm.addEventListener("change", (el) => {
     if (el.target.checked === true) {
       modalConfirm.style.display = "none";
-      showModal2(msgDiv);
+      exitModalBackground(msgDiv);
       fn();
       el.target.checked = false;
     }
@@ -523,10 +444,20 @@ function showConfirm(msg, param, param2) {
   const cancel = document.querySelector("[data-cancel]");
   cancel.addEventListener("click", () => {
     modalConfirm.style.display = "none";
-    showModal2(msgDiv);
+    exitModalBackground(msgDiv);
   });
   back.style.display = "";
   modalConfirm.style.display = "";
   okConfirm.checked = false;
   return;
 }
+
+back.addEventListener("click", (el) => {
+  body.style.overflow = "";
+  el.style.display = "none";
+  dialog.style.display = "none";
+  modalConfirm.style.display = "none";
+  okConfirm.checked = false;
+});
+
+export { tdIndex, tdInput, td, colspan, showConfirm };
