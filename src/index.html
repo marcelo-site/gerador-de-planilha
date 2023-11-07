@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Planilha</title>
     <link rel="stylesheet" href="style.css" />
-
     <script src="index.js" defer></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
-      integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script src="generate-pdf.js" defer></script>
   </head>
 
   <body>
+    <div class="mg-top"></div>
     <main>
-      <h1>PLANILHA</h1>
-      <div>
+      <div style="width: 100%">
+        <input
+          type="text"
+          id="title"
+          spellcheck="false"
+          placeholder="Insira o titulo da planilha aqui."
+        />
+      </div>
+      <div style="min-width: 720px">
         <table>
           <tr>
             <td colspan="1" rowspan="1" style="width: 50px">
@@ -33,7 +33,7 @@
         </table>
       </div>
     </main>
-    <span class="arrow" style="transform: rotateY(180deg); right: 285px"
+    <span class="arrow" style="transform: rotateY(180deg); right: 276px"
       >⏴</span
     >
     <aside>
@@ -94,12 +94,12 @@
       <div id="acoes">
         <h3>Ações</h3>
         <div class="grid">
-          <button id="blocoplus" class="btn">Adicionar bloco</button>
-          <button id="del-block" class="btn">Deletar bloco</button>
+          <button id="blocoplus" class="btn">Adicionar Bloco</button>
+          <button id="del-block" class="btn">Deletar Bloco</button>
         </div>
         <div class="grid">
-          <button id="linhaplus" class="btn">Adicionar linha</button>
-          <button id="del-row" class="btn">Deletar linha</button>
+          <button id="linhaplus" class="btn">Adicionar Linha</button>
+          <button id="del-row" class="btn">Deletar Linha</button>
         </div>
         <div
           class="flex"
@@ -115,33 +115,60 @@
           </div>
           <div class="flex-end"></div>
           <label for="div">Divisão: </label>
-          <input type="number" id="div" value="" />
+          <input type="number" id="div" value="" min="0" />
         </div>
       </div>
       <div id="save" class="flex">
-        <button class="btn" id="pdf">Gerar PDF</button>
-        <p>
-          Feito por
-          <a
-            href="https://www.facebook.com/profile.php?id=100015225941991"
-            target="_blank"
-            >Marcelo</a
-          >
+        <button
+          class="btn"
+          onclick="reload()"
+          style="margin-left: 175px; margin-bottom: .5em"
+        >
+          Zerar Dados
+        </button>
+        <script>
+          function reload() {
+            window.location.reload();
+          }
+        </script>
+        <p style="font-size: 0.9em; margin-left: 5px">
+          <span style="font-style: italic; font-size: 1em">copyright</span>
+          &copy; todos os direitos reservados ao autor.
         </p>
       </div>
     </aside>
-    <div id="message" style="display: none">Minha mensagem</div>
-    <dialog>
+    <div id="modal-msg" class="modal" style="display: none">
+      <div id="msg" data-msg=""></div>
+      <div id="actions" class="flex-end">
+        <button data-ok="ok" class="btn">Ok</button>
+      </div>
+    </div>
+    <div id="modal-confirm" class="modal" style="display: none">
+      <div data-msg=""></div>
+      <div id="actions" class="flex-end">
+        <label class="btn" for="confirm-ok">Ok</label>
+        <input
+          data-ok=""
+          type="checkbox"
+          id="confirm-ok"
+          style="display: none"
+        />
+        <button data-cancel="cancel" class="btn">Cancelar</button>
+      </div>
+    </div>
+    <div id="background" style="display: none"></div>
+    <div id="dialog" style="display: none" class="modal">
       <div>
         <div>
           <label for="size-new-column">Tamanho da nova coluna:</label>
         </div>
         <div class="flex">
           <input type="number" id="size-new-column" value="50" />
-          <button class="btn" id="ok">OK</button>
+          <button data-ok="" class="btn">Ok</button>
           <button class="btn" id="cancel">Cancelar</button>
         </div>
       </div>
-    </dialog>
+    </div>
+    <div id="message" style="display: none"></div>
   </body>
 </html>

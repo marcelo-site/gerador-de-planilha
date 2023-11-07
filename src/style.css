@@ -13,15 +13,28 @@
 }
 
 body {
-  overflow-x: hidden;
   display: grid;
   grid-template-columns: 1fr 300px;
+  transition: all .3s;
+}
+
+.mg-top {
+  width: 100vw;
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 5px;
+  background-color: #ffffff;
+  z-index: 2;
+  border-bottom: 1px solid var(--bd-color);
 }
 
 main {
-  height: 100vh;
+  min-height: calc(100vh - 5px);
   overflow: auto;
+  padding: 0 1em;
   transition: 0.2s;
+  position: relative;
 }
 
 h1,
@@ -30,14 +43,24 @@ h3 {
   color: var(--color);
 }
 
-main h1 {
+#title {
+  padding: 5px;
+  display: block;
+  width: 720px;
+  border: 1px solid var(--bd-color);
+  outline: none;
+  margin: 0 auto;
   text-align: center;
   margin-top: 1.5em;
-  font-size: 1.5em;
+  font-size: 1.25em;
+}
+
+#title::placeholder {
+  font-weight: 400;
 }
 
 table {
-  margin: 2em auto;
+  margin: 1em auto;
   background-color: #9b9b9b;
 }
 
@@ -51,6 +74,10 @@ th,
 td {
   border: 1px solid var(--bd-color);
   border-collapse: collapse;
+}
+
+input {
+  outline: none;
 }
 
 table input {
@@ -79,11 +106,14 @@ table input::placeholder {
 /* aside */
 aside {
   border-left: 1px solid var(--bd-color);
-  height: 100vh;
-  padding: 0 5px;
   overflow: hidden;
   transform-style: preserve-3d;
   transition: 0.2s;
+  padding: 5px 2px 0 5px;
+  position: fixed;
+  right: 0px;
+  height: 100vh;
+  transform: translateX(0px);
 }
 
 aside > div {
@@ -91,13 +121,14 @@ aside > div {
 }
 
 span.arrow {
+  overflow: hidden;
   text-align: center;
-  position: absolute;
-  z-index: 2000000;
+  position: fixed;
+  z-index: 1;
   margin-left: -16px;
   background-color: var(--color);
   color: white;
-  top: 3px;
+  top: 5px;
   font-size: 22px;
   border-radius: 50%;
   height: 32px;
@@ -148,6 +179,7 @@ input:checked {
 
 aside div {
   margin: 6px 3px;
+  /* padding: 3px 2px 4px 6px */
 }
 
 .btn {
@@ -204,6 +236,7 @@ input[type="text"]:focus {
 
 #save {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   position: absolute;
   bottom: 0;
@@ -218,7 +251,7 @@ input[type="text"]:focus {
   position: fixed;
   background-color: #2b57b6;
   color: white;
-  top: 50%;
+  top: 30%;
   right: 50px;
   border-radius: 5px;
   z-index: 1000;
@@ -277,25 +310,44 @@ input[type="text"]:focus {
   gap: 8px;
 }
 
-dialog {
-  margin: 4em auto;
-  padding: 1em;
+.modal {
+  background-color: white;
+  position: fixed;
+  top: 100px;
+  left: 40%;
+  margin: auto;
+  z-index: 100;
 }
 
-dialog label {
+.modal > div {
+  margin: 0.6em;
+}
+
+#dialog label {
   font-size: 18px;
 }
 
-dialog .flex {
+#dialog .flex {
   margin: 8px 0;
   gap: 8px;
 }
 
-dialog input[type="number"] {
+#dialog input[type="number"] {
   width: 75px;
 }
 
 @media print {
+  .mg-top {
+    display: none;
+  }
+  main {
+    width: 100vw;
+    padding: 0;
+  }
+  #title {
+    border: none;
+    margin-top: 0;
+  }
   table {
     color: transparent;
   }
@@ -305,7 +357,12 @@ dialog input[type="number"] {
   span.arrow {
     display: none;
   }
-  h1 {
-    display: none;
-  }
+}
+
+#background {
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  z-index: 10;
 }
