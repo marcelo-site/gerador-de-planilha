@@ -11,7 +11,7 @@
   <body>
     <div class="mg-top"></div>
     <main>
-      <div style="width: 100%">
+      <div>
         <input
           type="text"
           id="title"
@@ -19,7 +19,7 @@
           placeholder="Insira o titulo da planilha aqui."
         />
       </div>
-      <div style="min-width: 720px">
+      <div>
         <table>
           <tr>
             <td colspan="1" rowspan="1" style="width: 50px">
@@ -47,11 +47,11 @@
         <h3>Estilos</h3>
         <div>
           <label for="colspan">Quantide de colunas: </label>
-          <input type="number" name="col-size" id="colspan" min="1" value="1" />
+          <input type="number" name="col-size" id="colspan" min="1" value="" />
         </div>
         <div>
           <label for="linhas">Quantidade de linhas: </label>
-          <input type="number" name="linhas" id="linhas" min="1" value="1" />
+          <input type="number" name="linhas" id="linhas" min="1" value="" />
         </div>
         <div>
           <label for="font-size">Tamanho da fonte: </label>
@@ -60,7 +60,7 @@
             name="font-size"
             id="font-size"
             min="1"
-            value="16"
+            value=""
           />
         </div>
         <div>
@@ -107,7 +107,7 @@
         >
           <div>
             <label for="number">Número:</label>
-            <input type="checkbox" name="number" id="number" value="50" />
+            <input type="checkbox" name="number" id="number" value="" />
           </div>
           <div>
             <label for="sum">Soma:</label>
@@ -122,7 +122,7 @@
         <button
           class="btn"
           id="empty"
-          style="margin-left: 175px; margin-bottom: .5em"
+          style="margin-left: 175px; margin-bottom: 0.5em"
         >
           Zerar Dados
         </button>

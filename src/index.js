@@ -40,6 +40,8 @@ function sumValue() {
         maximumFractionDigits: 2,
       });
       if (sumTd.value === "NaN") sumTd.value = "soma";
+    } else {
+      sumTd.value = "soma";
     }
   }
 }
@@ -81,13 +83,10 @@ function confirmdelColunm() {
 }
 
 colTable[1].addEventListener("click", (el) => {
-  const tr = document.querySelectorAll("tr");
-  const length = tr[0].querySelectorAll("td").length;
-  if (length === 1) {
-    showModal("Essa é a ultima coluna!");
-  } else {
+  const length = document.querySelectorAll("td").length;
+  if (length > 1) {
     showConfirm("Deseja deletar uma coluna?", confirmdelColunm, true);
-  }
+  } else showModal("Essa é a ultima coluna!");
   tdEventListener();
 });
 closeDialog.addEventListener("click", () => {
@@ -95,15 +94,6 @@ closeDialog.addEventListener("click", () => {
   body.style.overflow = "";
   back.style.display = "none";
 });
-
-function copyPaste(e) {
-  if ((e.shiftKey && e.altKey && e.key === "c") || e.key === "C") {
-    copyStyle();
-  }
-  if ((e.shiftKey && e.altKey && e.key === "v") || e.key === "V") {
-    pasteStyle();
-  }
-}
 
 function tdEventListener() {
   tr = document.querySelectorAll("tr");
@@ -113,7 +103,6 @@ function tdEventListener() {
   tdInput = document.querySelectorAll("td input");
 
   tdInput.forEach((element, i) => {
-    element.addEventListener("keydown", copyPaste);
     element.addEventListener("focus", () => {
       div.value = "";
       setStyleInfo(element);
@@ -192,9 +181,12 @@ duplicarBloco.addEventListener("click", () => {
     const data = td[tdIndex];
     tdInput.forEach((el) => (el.style.backgroundColor = ""));
     data.insertAdjacentHTML("afterend", data.outerHTML);
+
+    td = document.querySelectorAll("td");
+    tdEventListener();
+  } else {
+    showModal("Não há bloco selecionado!");
   }
-  td = document.querySelectorAll("td");
-  tdEventListener();
 });
 
 duplicarLinha.addEventListener("click", () => {
@@ -217,7 +209,7 @@ delBlock.addEventListener("click", async () => {
   if (tdIndex >= 0) {
     td[tdIndex].style.backgroundColor = "red";
     await new Promise((resolve) => setTimeout(resolve, 600));
-    showConfirm("Tem certeza que deseja deletar este bloco", confirmDelBlock);
+    showConfirm("Tem certeza que deseja deletar este bloco?", confirmDelBlock);
     td[tdIndex].style.backgroundColor = "";
   } else {
     showModal("Selecione algum bloco!");
@@ -234,7 +226,7 @@ delRow.addEventListener("click", async () => {
   if (indexRow >= 0 && tr.length > 1) {
     tr[indexRow].style.backgroundColor = "red";
     await new Promise((resolve) => setTimeout(resolve, 600));
-    showConfirm("Tem certeza que deseja deletar este bloco", confirmDelRow);
+    showConfirm("Tem certeza que deseja deletar esta linha?", confirmDelRow);
   } else if (indexRow < 0) {
     showModal("Selecione algum linha!");
   } else if (tr.length === 1) {
@@ -276,7 +268,7 @@ async function setFuncBlock(el, param, check) {
       el.target.checked = true;
       check.checked = false;
     } else {
-      showModal("Outro bloco já é usado para soma!");
+      showModal("Outro bloco já éstá sendo usado para soma!");
       el.target.checked = false;
       return;
     }
@@ -291,15 +283,23 @@ number.addEventListener("change", function (el) {
   if (tdIndex >= 0) {
     setFuncBlock(el, "number", sum);
   } else {
-    showModal("Não há objeto selcionado!");
+    showModal("Não há objeto selecionado!");
     el.target.checked = false;
   }
 });
 
 sum.addEventListener("change", (el) => {
+  if (el.target.checked === false) {
+    const sum = document.querySelector(".sum");
+    if (sum) {
+      sum.setAttribute("class", "");
+      sum.value = "";
+    }
+    return;
+  }
   if (tdIndex >= 0) {
     if (!el.target.classList.contains("sum")) setFuncBlock(el, "sum", number);
-    else showModal("Outro bloco já esta sendo usado para soma!");
+    else showModal("Outro bloco já está sendo usado para soma!");
   } else {
     showModal("Não ha objeto selecionado!");
     el.target.checked = false;
@@ -348,12 +348,13 @@ function division(param, parm2) {
           "Deseja mudar de " + v + " para divisão?",
           confirmCheckFasle
         );
+        return;
       }
     }
-  }
-  if (parm2 === "div") {
-    tdInput[tdIndex].setAttribute("class", "div");
-    tdInput[tdIndex].setAttribute("data-div", param.value);
+    if (parm2 === "div") {
+      tdInput[tdIndex].setAttribute("class", "div");
+      tdInput[tdIndex].setAttribute("data-div", param.value);
+    }
   }
   const valuesum = sumTd?.value.replace(".", "").replace(",", ".");
   const divisions = document.querySelectorAll(".div");
@@ -390,15 +391,16 @@ div.addEventListener("change", (el) => {
         });
       });
     }
-  } else {
-    showModal("Não há elemento selecionado!");
-  }
+  } else showModal("Não há elemento selecionado!");
 });
 
-function exitModalBackground(paramMsg) {
-  back.style.display = "none";
-  paramMsg.innerHTML = "";
+function exitModalBackground() {
   body.style.overflow = "";
+  dialog.style.display = "none";
+  modalConfirm.style.display = "none";
+  modalMsg.style.display = "none";
+  okConfirm.checked = false;
+  back.style.display = "none";
 }
 
 const modalMsg = document.querySelector("#modal-msg");
@@ -407,10 +409,7 @@ function showModal(msg) {
   const msgDiv = modalMsg.querySelector("[data-msg]");
   msgDiv.innerHTML = msg;
   const ok = modalMsg.querySelector("[data-ok]");
-  ok.addEventListener("click", () => {
-    modalMsg.style.display = "none";
-    exitModalBackground(msgDiv);
-  });
+  ok.addEventListener("click", exitModalBackground);
   back.style.display = "";
   modalMsg.style.display = "";
 }
@@ -418,7 +417,6 @@ function showModal(msg) {
 // confirm delete coluna elementos
 const modalConfirm = document.querySelector("#modal-confirm");
 const okConfirm = modalConfirm.querySelector("[data-ok]");
-
 // check botao
 let clickDelColumn = false;
 let fn = null;
@@ -430,8 +428,7 @@ function showConfirm(msg, param, param2) {
   fn = param;
   okConfirm.addEventListener("change", (el) => {
     if (el.target.checked === true) {
-      modalConfirm.style.display = "none";
-      exitModalBackground(msgDiv);
+      exitModalBackground();
       fn();
       el.target.checked = false;
     }
@@ -443,8 +440,12 @@ function showConfirm(msg, param, param2) {
   }
   const cancel = document.querySelector("[data-cancel]");
   cancel.addEventListener("click", () => {
-    modalConfirm.style.display = "none";
-    exitModalBackground(msgDiv);
+    const tdCurrent = tdInput[tdIndex];
+    tdCurrent.focus();
+    if (tdCurrent.classList.contains("div")) {
+      div.value = tdCurrent.getAttribute("data-div");
+    }
+    exitModalBackground();
   });
   back.style.display = "";
   modalConfirm.style.display = "";
@@ -452,12 +453,6 @@ function showConfirm(msg, param, param2) {
   return;
 }
 
-back.addEventListener("click", (el) => {
-  body.style.overflow = "";
-  el.style.display = "none";
-  dialog.style.display = "none";
-  modalConfirm.style.display = "none";
-  okConfirm.checked = false;
-});
+back.addEventListener("click", exitModalBackground);
 
 export { tdIndex, tdInput, td, colspan, showConfirm };

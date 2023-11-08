@@ -1,14 +1,5 @@
-const {
-  app,
-  BrowserWindow,
-  Menu,
-  dialog,
-  // ipcMain,
-  shell,
-  // webContents,
-} = require("electron");
+const { app, BrowserWindow, Menu, dialog, shell } = require("electron");
 const fs = require("fs");
-const path = require("path");
 
 // Janela principal
 let mainWindow = null;
@@ -16,10 +7,6 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
   });
 
   await mainWindow.loadFile("src/index.html");
@@ -45,7 +32,6 @@ const savePDF = async () => {
       dialogFile.filePath = dialogFile.filePath + ".pdf";
     }
     const pdf = await mainWindow.webContents.printToPDF({
-      // margins: ['100', '0', '0', '0'],
       printBackground: true,
     });
     fs.writeFile(dialogFile.filePath, pdf, (error) => {

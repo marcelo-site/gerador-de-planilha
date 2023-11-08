@@ -15,12 +15,12 @@
 body {
   display: grid;
   grid-template-columns: 1fr 300px;
-  transition: all .3s;
+  transition: all 0.3s;
   margin-bottom: 3em;
 }
 
-body::-webkit-scrollbar { 
-	display: none;
+body::-webkit-scrollbar {
+  display: none;
 }
 
 .mg-top {
@@ -43,7 +43,6 @@ main {
 }
 
 h1,
-h2,
 h3 {
   color: var(--color);
 }
@@ -61,7 +60,7 @@ h3 {
 }
 
 #title::placeholder {
-  font-weight: 400;
+  font-size: 16px;
 }
 
 table {
@@ -321,7 +320,7 @@ input[type="text"]:focus {
   left: 40%;
   margin: auto;
   z-index: 100;
-  padding: .5em;
+  padding: 0.5em;
 }
 
 .modal > div {
