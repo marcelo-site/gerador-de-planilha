@@ -249,8 +249,8 @@ input[type="text"]:focus {
 
 #message {
   text-align: center;
-  padding: 10px;
-  font-size: 14px;
+  padding: 12px;
+  font-size: 16px;
   position: fixed;
   background-color: #2b57b6;
   color: white;

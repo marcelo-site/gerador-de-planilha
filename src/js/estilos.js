@@ -13,8 +13,8 @@ const estilos = () => {
     if (tdIndex >= 0) tdInput[tdIndex].style[style] = value;
   }
 
-  size.addEventListener("change", (el) => {
-    stylechange("width", `${el.target.value}px`);
+  size.addEventListener("change", (el) => {;
+    td[tdIndex].style.width = el.target.value + "px";
   });
 
   fontsize.addEventListener("change", (el) =>
@@ -72,7 +72,7 @@ asideBefore.addEventListener("click", (el, fn) => {
 document
   .querySelector("#empty")
   .addEventListener("click", () =>
-    showConfirm("Deseja zerar todos os dados?", () => window.location.reload())
+    showConfirm("Se não tiver um modelo salvo esta ação irá zerar tudo!", () => window.location.reload())
   );
 
 export { estilos, textAlign, setStyleInfo };

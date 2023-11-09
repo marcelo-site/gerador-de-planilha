@@ -7,9 +7,23 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
   });
-
+  mainWindow.webContents.openDevTools();
   await mainWindow.loadFile("src/index.html");
+};
+
+const messageBox = async (message, detail, img, buttons) => {
+  return await dialog.showMessageBox({
+    title: "Atenção!",
+    message: message,
+    detail: detail || "Algum erro não indentificado aconteceu!",
+    icon: img,
+    buttons: buttons,
+  });
 };
 
 const savePDF = async () => {
@@ -38,7 +52,11 @@ const savePDF = async () => {
       if (error) throw error;
     });
   } catch (error) {
-    console.log(error);
+    const msg = "Ops! algum erro aconteceu!";
+    const detail = error?.code ? null : error.message;
+    const img = "./src/img/warning.png";
+    const buttons = ["ok"];
+    messageBox(msg, detail, img, buttons);
   }
 };
 
@@ -46,6 +64,86 @@ const pathDate = (paramName, paramExtension) => {
   const date = new Date();
   const pathDateAdd = date.toLocaleDateString("pt-br").replace(/\//g, "-");
   return `/${paramName}-${pathDateAdd}.${paramExtension}`;
+};
+
+// salvar no disco
+const saveFileAs = async (extension) => {
+  try {
+    const title = await mainWindow.webContents.executeJavaScript(
+      "document.querySelector('#title').value"
+    );
+    const file = title ? title.replace(/\s/g, "-") + extension : "modelo" + extension;
+    let dialogFile = await dialog.showSaveDialog({
+      title: "Exportando Modelo",
+      buttonLabel: "Exportar Modelo",
+      defaultPath: file,
+    });
+    if (dialogFile.canceled) {
+      return false;
+    }
+    const existsExtension = dialogFile.filePath.split(".");
+    if (existsExtension.length !== 2) {
+      dialogFile.filePath = dialogFile.filePath + extension;
+    }
+    const content = await mainWindow.webContents.executeJavaScript(
+      'localStorage.getItem("model");',
+      true
+    );
+    if (!content) throw new Error("Talvez você não tenha modelo Salvo!");
+    // salvar
+    fs.writeFile(dialogFile.filePath, content, (error) => {
+      if (error) throw error;
+    });
+  } catch (error) {
+    const msg = "Ops! algum erro aconteceu!";
+    const detail = error?.code ? "Algo inesperado aconteceu!" : error.message;
+    const img = "./src/img/warning.png";
+    const buttons = ["ok"];
+    messageBox(msg, detail, img, buttons);
+  }
+};
+
+// importar arquivo
+const openFile = async () => {
+  try {
+    let dialogFile = await dialog.showOpenDialog({
+      title: "Procurando Modelo",
+      buttonLabel: "Importar Modelo",
+      message: "mensagem",
+      properties: ["openFile"],
+      filters: [
+        {
+          name: "All",
+          extensions: ["*"],
+        },
+        {
+          name: "Arquivos .extension",
+          extensions: ["txt"],
+        },
+      ],
+    });
+    if (dialogFile.canceled) {
+      return false;
+    }
+    const msg = "Tem certeza que deseja atualizar o  modelo?";
+    const detail =
+      "Se continuar vai subistituir todos na tela pelo do arquivo escolhido.";
+    const img = "./src/img/warning.png";
+    const buttons = ["ok", "cancel"];
+    const res = await messageBox(msg, detail, img, buttons);
+
+    if (res.response === 0) {
+      const content = fs.readFileSync(dialogFile.filePaths[0], "utf-8");
+      // salvar no frontend
+      mainWindow.webContents.send("update-model", content);
+    }
+  } catch (error) {
+    const msg = "Ops! algum erro aconteceu!";
+    const detail = error?.code ? null : error.message;
+    const img = "./src/img/warning.png";
+    const buttons = ["ok"];
+    messageBox(msg, detail, img, buttons);
+  }
 };
 
 //template menu
@@ -60,17 +158,31 @@ const templateMenu = [
           savePDF();
         },
       },
+      {
+        label: "Exportar Modelo",
+        accelerator: "CmdOrCtrl+shift+s",
+        click() {
+          saveFileAs(".txt");
+        },
+      },
+      {
+        label: "Importar Modelo",
+        accelerator: "CmdOrCtrl+shift+A",
+        click() {
+          openFile();
+        },
+      },
     ],
   },
   {
     label: "Vizualizar",
     submenu: [
       {
-        label: "zoom +",
+        label: "Zoom +",
         role: "zoomin",
       },
       {
-        label: "zoom -",
+        label: "Zoom -",
         role: "zoomout",
       },
       {
@@ -84,7 +196,7 @@ const templateMenu = [
       {
         label: "Fechar app",
         role: process.platform === "darwin" ? "close" : "quit",
-        accelerator: "CmdOrCtrl+Shift+X",
+        accelerator: "CmdOrCtrl+Shift+Q",
       },
     ],
   },

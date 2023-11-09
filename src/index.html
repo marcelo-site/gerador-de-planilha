@@ -4,8 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Planilha</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="index.js" defer type="module"></script>
+
+    <script src="js/model.js" defer></script>
+    <script src="js/index.js" defer type="module"></script>
+    <link rel="stylesheet" href="css/style.css" />
   </head>
 
   <body>
@@ -21,15 +23,7 @@
       </div>
       <div>
         <table>
-          <tr>
-            <td colspan="1" rowspan="1" style="width: 50px">
-              <input
-                type="text"
-                spellcheck="false"
-                style="text-align: center"
-              />
-            </td>
-          </tr>
+          <tbody></tbody>
         </table>
       </div>
     </main>
@@ -118,14 +112,13 @@
           <input type="number" id="div" value="" min="0" />
         </div>
       </div>
-      <div id="save" class="flex">
-        <button
-          class="btn"
-          id="empty"
-          style="margin-left: 175px; margin-bottom: 0.5em"
-        >
-          Zerar Dados
-        </button>
+      <div id="save" class="">
+        <div class="flex" style="justify-content: space-between">
+          <button class="btn" id="model" onclick="saveModel()">
+            Salvar Modelo
+          </button>
+          <button class="btn" id="empty">Zerar Dados</button>
+        </div>
         <p style="font-size: 0.9em; margin-left: 5px">
           <span style="font-style: italic; font-size: 1em">copyright</span>
           &copy; todos os direitos reservados ao autor.

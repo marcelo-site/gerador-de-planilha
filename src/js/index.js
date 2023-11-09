@@ -104,7 +104,7 @@ function tdEventListener() {
 
   tdInput.forEach((element, i) => {
     element.addEventListener("focus", () => {
-      div.value = "";
+      div.value = element.getAttribute("data-div") || "";
       setStyleInfo(element);
       const align = tdInput[i]?.style?.textAlign;
       textAlign.value = align.replace(" ", "");
@@ -141,7 +141,7 @@ function copyStyle() {
     tdRow = td[tdIndex].getAttribute("rowspan");
     styleTd = td[tdIndex].getAttribute("style");
     styleInput = tdInput[tdIndex].getAttribute("style");
-    msg.innerHTML = "Esltilo copiado!";
+    msg.innerHTML = "Estilo copiado!";
     msg.style.display = "";
     setTimeout(() => (copy.checked = false), 600);
     setTimeout(() => (msg.style.display = "none"), 3 * 1000);
@@ -245,11 +245,8 @@ const replaceInput = (el, bool) => {
   function replace() {
     this.value = this.value.replace(/[^0-9.|,]/g, "").replace(/(\*?)\*/g, "$1");
   }
-  if (bool) {
-    el.addEventListener("input", replace);
-  } else {
-    el.removeEventListener("input", replace);
-  }
+  if (bool) el.addEventListener("input", replace);
+  else el.removeEventListener("input", replace);
 };
 
 async function setFuncBlock(el, param, check) {
@@ -257,7 +254,7 @@ async function setFuncBlock(el, param, check) {
     let exists = null;
     if (!!tdInput[tdIndex].getAttribute("data-div")) {
       showModal("Esse bloco já é usado para divisão!");
-      el.checked = false;
+      el.target.checked = false;
       return;
     } else exists = document.querySelector(".sum");
 
