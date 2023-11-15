@@ -69,10 +69,22 @@ asideBefore.addEventListener("click", (el, fn) => {
   }
 });
 
+
+const deleteModel = () => {
+  const index = localStorage.getItem("index") 
+  if(!index) return
+  const models = localStorage.getItem("model")
+  if(!models) return
+  const model = JSON.parse(models)
+  model.splice(parseInt(index), 1)
+  localStorage.setItem("model", JSON.stringify(model))
+  localStorage.setItem("index", "")
+  setTimeout(() => window.location.reload(), 500)
+}
 document
   .querySelector("#empty")
   .addEventListener("click", () =>
-    showConfirm("Se não tiver um modelo salvo esta ação irá zerar tudo!", () => window.location.reload())
+    showConfirm("Deseja Apagar essa tabela!", deleteModel )
   );
 
 export { estilos, textAlign, setStyleInfo };

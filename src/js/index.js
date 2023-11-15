@@ -438,8 +438,8 @@ function showConfirm(msg, param, param2) {
   const cancel = document.querySelector("[data-cancel]");
   cancel.addEventListener("click", () => {
     const tdCurrent = tdInput[tdIndex];
-    tdCurrent.focus();
-    if (tdCurrent.classList.contains("div")) {
+    tdCurrent?.focus();
+    if (tdCurrent?.classList.contains("div")) {
       div.value = tdCurrent.getAttribute("data-div");
     }
     exitModalBackground();

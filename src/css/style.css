@@ -166,6 +166,13 @@ input {
   display: inline-block;
 }
 
+select {
+  width: 190px;
+}
+option {
+  padding: 2px;
+}
+
 input[type="number"],
 #grupo {
   text-align: center;

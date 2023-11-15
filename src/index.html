@@ -37,6 +37,12 @@
           <span class="btn minus"> - </span>
         </div>
       </div>
+      <div style="padding: 0 0 3px;">
+        <label for="models">Modelos: </label>
+        <select name="" id="models">
+          <option value="">Selecione um modelo</option>
+        </select>
+      </div>
       <div id="estilos">
         <h3>Estilos</h3>
         <div>
@@ -113,11 +119,14 @@
         </div>
       </div>
       <div id="save" class="">
-        <div class="flex" style="justify-content: space-between">
+        <div class="flex" style="justify-content: space-between; gap: 4px;">
           <button class="btn" id="model" onclick="saveModel()">
             Salvar Modelo
           </button>
-          <button class="btn" id="empty">Zerar Dados</button>
+          <button class="btn" id="model" onclick="editModel()">
+            Editar Modelo
+          </button>
+          <button class="btn" id="empty">Deletar Modelo</button>
         </div>
         <p style="font-size: 0.9em; margin-left: 5px">
           <span style="font-style: italic; font-size: 1em">copyright</span>

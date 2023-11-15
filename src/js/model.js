@@ -4,34 +4,51 @@ ipcRenderer.on("update-model", (e, data) => {
   setTimeout(() => location.reload(), 500);
 });
 
-const tableModel = localStorage.getItem("model");
+const tableModelData = localStorage?.getItem("model");
+let tableModel = null;
+if (tableModelData) tableModel = JSON.parse(tableModelData);
+else localStorage.setItem("model", JSON.stringify([]))
+const index = localStorage?.getItem("index");
+let modelIndex = -1;
+if (index) modelIndex = parseInt(index);
+else localStorage.setItem("index", "")
 const table = document.querySelector("table");
+const models = document.querySelector("#models");
 
 const setModal = () => {
-  if (tableModel) {
-    const model = JSON.parse(tableModel);
-    if (typeof model === "object") {
-      document.querySelector("#title").value = model.title;
-      model.data.map((el) => {
-        const tr = document.createElement("tr");
-        el.map((e) => {
-          const td = document.createElement("td");
-          td.setAttribute("colspan", e.colspan || 1);
-          td.setAttribute("rowspan", e.rowspan || 1);
-          td.style.width = e?.width ? e.width : 50;
-          const input = document.createElement("input");
-          input.type = "text";
-          input.value = e.value;
-          input.spellcheck = "false";
-          input.style = e.style;
-          input.setAttribute("class", e.className);
-          if (e?.div) input.setAttribute("data-div", e.div);
-          td.append(input);
-          tr.append(td);
-        });
-        table.querySelector("tbody").append(tr);
+  if (tableModel?.length > 0) {
+    tableModel.map((model, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.innerHTML = model.title;
+      models.appendChild(opt);
+    });
+    document.querySelector("select").addEventListener("change", (el) => {
+      localStorage.setItem("index", el.target.value);
+      setTimeout(() => window.location.reload(), 500);
+    });
+  }
+  if (tableModel?.length > 0 && modelIndex >= 0) {
+    document.querySelector("#title").value = tableModel[modelIndex].title;
+    tableModel[modelIndex].data.map((el) => {
+      const tr = document.createElement("tr");
+      el.map((e) => {
+        const td = document.createElement("td");
+        td.setAttribute("colspan", e.colspan || 1);
+        td.setAttribute("rowspan", e.rowspan || 1);
+        td.style.width = e?.width ? e.width : 50;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = e.value;
+        input.spellcheck = "false";
+        input.style = e.style;
+        input.setAttribute("class", e.className);
+        if (e?.div) input.setAttribute("data-div", e.div);
+        td.append(input);
+        tr.append(td);
       });
-    }
+      table.querySelector("tbody").append(tr);
+    });
   } else {
     const tr = document.createElement("tr");
     const td = document.createElement("td");
@@ -49,7 +66,11 @@ const setModal = () => {
 };
 setModal();
 
-const saveModel = () => {
+const editModel = () => {
+  saveModel(localStorage.getItem("index"));
+};
+
+const saveModel = (param) => {
   const trs = document.querySelectorAll("tr");
   const all = Array.from(trs).map((tr) => {
     const tds = tr.querySelectorAll("td");
@@ -69,8 +90,17 @@ const saveModel = () => {
     });
     return arrTd;
   });
-  const title = document.querySelector('#title').value
-  localStorage.setItem("model", JSON.stringify({ title: title, data: all }));
+  const title = document.querySelector("#title").value || 'Sem Titulo';
+  let modelsData = tableModel?.length > 0 ? tableModel : [];
+
+  if (param) {
+    modelsData.splice(param, 1, { title: title, data: all });
+  } else {
+    localStorage.setItem("index", modelsData.length)
+    modelsData.push({ title: title, data: all });
+  }
+
+  localStorage.setItem("model", JSON.stringify(modelsData));
   const msg = document.querySelector("#message");
   msg.innerHTML = "Você acaba de salvar este modelo!";
   msg.style.display = "";
@@ -79,5 +109,6 @@ const saveModel = () => {
   setTimeout(() => {
     msg.style.display = "none";
     msg.style.transform = "translateX(0)";
+    window.location.reload()
   }, 3 * 1000);
 };
